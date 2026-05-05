@@ -1,4 +1,7 @@
 const Contact = require('../models/Contact');
+const sendEmail = require('../utils/sendEmail');
+const getContactEmailTemplate = require('../utils/contactEmailTemplate');
+
 
 // @desc    Create new contact submission
 // @route   POST /api/contact
@@ -6,6 +9,22 @@ const Contact = require('../models/Contact');
 const createContact = async (req, res) => {
   try {
     const contact = await Contact.create(req.body);
+
+    // Send email notification
+    try {
+      const emailHtml = getContactEmailTemplate(contact);
+
+      await sendEmail({
+        email: 'admin@veloc.in', // Admin email
+        subject: `🚀 New Lead: ${contact.fullName} - ${contact.storeName || 'Store'}`,
+        html: emailHtml,
+        replyTo: contact.workEmail,
+      });
+    } catch (emailError) {
+      console.error('Email sending failed:', emailError);
+      // We don't want to fail the request if email fails, but we should log it
+    }
+
     res.status(201).json({
       success: true,
       data: contact,
