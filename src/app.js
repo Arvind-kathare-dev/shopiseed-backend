@@ -11,7 +11,12 @@ const app = express();
 app.use(express.json());
 app.use(
   cors({
-    origin: ['http://localhost:8080', 'http://localhost:3000'], // Added 8080 for admin panel
+    origin: [
+      'http://localhost:8080',
+      'http://localhost:3000',
+      'https://shopiseed-admin-pg086jfce-arvind-kathare-devs-projects.vercel.app',
+      'https://shopify-store-murex-zeta.vercel.app'
+    ],
     credentials: true,
   })
 );
