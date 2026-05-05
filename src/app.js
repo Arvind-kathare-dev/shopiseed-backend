@@ -14,8 +14,8 @@ app.use(
     origin: [
       'http://localhost:8080',
       'http://localhost:3000',
-      'https://shopiseed-admin-pg086jfce-arvind-kathare-devs-projects.vercel.app',
-      'https://shopify-store-murex-zeta.vercel.app'
+      'https://shopify-store-murex-zeta.vercel.app',
+      'https://shopiseed-admin.vercel.app',
     ],
     credentials: true,
   })
