@@ -4,6 +4,10 @@ const morgan = require('morgan');
 const { notFound, errorHandler } = require('./middleware/errorMiddleware');
 const authRoutes = require('./routes/authRoutes');
 const contactRoutes = require('./routes/contactRoutes');
+const connectDB = require('./config/db');
+
+// Connect to Database
+connectDB();
 
 const app = express();
 
@@ -31,7 +35,12 @@ app.use('/api/contact', contactRoutes);
 
 // Health check
 app.get('/', (req, res) => {
-  res.send('API is running...');
+  const dbStatus = require('mongoose').connection.readyState === 1 ? 'Connected' : 'Disconnected';
+  res.json({
+    status: 'API is running...',
+    database: dbStatus,
+    environment: process.env.NODE_ENV
+  });
 });
 
 // Error handling
