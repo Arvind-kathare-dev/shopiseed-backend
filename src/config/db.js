@@ -2,23 +2,26 @@ const mongoose = require('mongoose');
 
 let isConnected = false;
 
+// Disable buffering for all models
+// This prevents Mongoose from waiting for a connection that isn't established
+mongoose.set('bufferCommands', false);
+
 const connectDB = async () => {
   if (isConnected) {
-    console.log('Using existing database connection');
     return;
   }
 
   try {
     const db = await mongoose.connect(process.env.MONGO_URI, {
-      serverSelectionTimeoutMS: 5000,
-      socketTimeoutMS: 45000,
+      serverSelectionTimeoutMS: 5000, // Timeout after 5s instead of 30s
     });
     
     isConnected = db.connections[0].readyState;
     console.log(`MongoDB Connected: ${db.connection.host}`);
   } catch (error) {
     console.error(`Database Connection Error: ${error.message}`);
-    // In serverless, we don't want to exit the process
+    isConnected = false;
+    throw error; // Throwing error so the caller knows it failed
   }
 };
 

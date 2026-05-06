@@ -8,10 +8,21 @@ const userRoutes = require('./routes/userRoutes');
 const categoryRoutes = require('./routes/categoryRoutes');
 const connectDB = require('./config/db');
 
-// Connect to Database
-connectDB();
-
 const app = express();
+
+// Database Connection Middleware (Ensures DB is connected before processing requests)
+app.use(async (req, res, next) => {
+  try {
+    await connectDB();
+    next();
+  } catch (error) {
+    res.status(503).json({
+      success: false,
+      message: 'Database connection failed. Please check if your IP is whitelisted in MongoDB Atlas.',
+      error: error.message
+    });
+  }
+});
 
 // Middleware
 app.use(express.json());
@@ -39,10 +50,16 @@ app.use('/api/categories', categoryRoutes);
 
 // Health check
 app.get('/', (req, res) => {
-  const dbStatus = require('mongoose').connection.readyState === 1 ? 'Connected' : 'Disconnected';
+  const states = {
+    0: 'Disconnected',
+    1: 'Connected',
+    2: 'Connecting',
+    3: 'Disconnecting',
+  };
+  const readyState = require('mongoose').connection.readyState;
   res.json({
     status: 'API is running...',
-    database: dbStatus,
+    database: states[readyState] || 'Unknown',
     environment: process.env.NODE_ENV
   });
 });
