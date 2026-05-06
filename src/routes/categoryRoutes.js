@@ -1,0 +1,20 @@
+const express = require("express");
+const router = express.Router();
+const {
+  getCategories,
+  createCategory,
+  updateCategory,
+  deleteCategory,
+} = require("../controllers/categoryController");
+const { protect } = require("../middleware/authMiddleware");
+
+// GET categories is public, others are protected
+router.route("/")
+  .get(getCategories)
+  .post(protect, createCategory);
+
+router.route("/:id")
+  .put(protect, updateCategory)
+  .delete(protect, deleteCategory);
+
+module.exports = router;

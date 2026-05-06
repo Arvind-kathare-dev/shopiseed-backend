@@ -15,7 +15,6 @@ const userSchema = mongoose.Schema(
     category: {
       type: String,
       required: [true, "Please select a category"],
-      enum: ["E-commerce", "Fashion", "Electronics", "Food & Drink", "Health & Beauty", "Other"],
     },
     plan: {
       type: String,
